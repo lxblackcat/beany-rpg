@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Beany · 三天 · B组</title>
+<style>
+:root{--bg:#0d1117;--c:#161b22;--b:#30363d;--t:#c9d1d9;--d:#8b949e;--g:#d2991d;--a:#58a6ff;--r:#f85149;--gr:#3fb950}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--t);display:flex;justify-content:center;min-height:100dvh}
+#app{width:100%;max-width:460px;display:flex;flex-direction:column;min-height:100dvh;padding-bottom:env(safe-area-inset-bottom,12px)}
+#bar{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:var(--c);border-bottom:1px solid var(--b);position:sticky;top:0;z-index:10;gap:8px}
+#bar .day{background:var(--a);color:#000;padding:2px 10px;border-radius:12px;font-size:12px;font-weight:700}
+#bar .hp-wrap{flex:1;height:6px;background:#21262d;border-radius:3px;overflow:hidden}
+#bar .hp-fill{height:100%;border-radius:3px;transition:width .6s;background:linear-gradient(90deg,var(--r),var(--g),var(--gr))}
+#bar .hp-num{font-size:11px;color:var(--d);min-width:36px;text-align:right}
+#wrap{flex:1;display:flex;flex-direction:column;gap:8px;padding:10px 12px;overflow-y:auto}
+.card{background:var(--c);border:1px solid var(--b);border-radius:10px;padding:12px 14px;animation:fade .3s}
+@keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+.card .tag{display:inline-block;font-size:10px;padding:2px 8px;border-radius:8px;background:#21262d;margin-bottom:6px}
+.w{font-size:13px;line-height:1.8;color:#b1bac4}
+.bubble{padding:10px 14px;border-radius:12px;margin:4px 0;line-height:1.7;font-size:13px;max-width:90%;animation:fade .35s;background:#1e2318;align-self:flex-start;border:1px solid #3d4a2e}
+.bubble .bm{font-size:11px;color:var(--g);margin-bottom:2px}
+.bubble .ba{font-size:12px;color:var(--d);font-style:italic}
+.bubble .br{font-size:10px;color:#6a7a5a;margin-top:2px}
+.day-sep{text-align:center;padding:12px 0;margin:2px 0;border-top:1px solid var(--b);border-bottom:1px solid var(--b)}
+.day-sep .dn{font-size:14px;color:var(--g);font-weight:600}
+.day-sep .dm{font-size:11px;color:var(--d);margin-top:2px}
+.choices-wrap{background:var(--c);border:1px solid var(--b);border-radius:10px;padding:14px;margin-top:8px}
+.choices-wrap h3{font-size:12px;color:var(--g);margin-bottom:10px}
+.cbtn{display:block;width:100%;padding:12px 14px;margin:6px 0;background:#1c2433;border:1px solid #30363d;border-radius:10px;color:var(--t);text-align:left;cursor:pointer;transition:all .15s;font-size:13px;line-height:1.6}
+.cbtn:active{background:#243044;border-color:var(--a)}
+.cbtn .hint{display:block;font-size:11px;color:var(--d);margin-top:2px;font-style:italic}
+.obtn{display:block;width:100%;padding:14px;margin-top:8px;background:var(--g);color:#000;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;text-align:center}
+.obtn:active{opacity:.8}
+.intro{padding:40px 20px 30px;text-align:center;flex:1;display:flex;flex-direction:column;justify-content:center;animation:fade .8s}
+.intro .logo{font-size:56px;margin-bottom:4px;animation:float 3s ease-in-out infinite}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+.intro h1{font-size:24px;color:var(--g);margin-bottom:6px;letter-spacing:2px}
+.intro .sub{font-size:13px;color:var(--d);margin-bottom:24px;line-height:1.8}
+.intro .desc{font-size:13px;line-height:2;color:#b1bac4;margin-bottom:6px}
+.intro .desc em{color:var(--g);font-style:normal}
+.intro .note{font-size:11px;color:var(--d);margin-top:20px;line-height:1.6}
+.sbtn{display:inline-block;padding:14px 48px;background:var(--g);color:#000;border:none;border-radius:24px;font-size:16px;font-weight:700;cursor:pointer;margin:20px auto 0;transition:transform .2s,box-shadow .2s;box-shadow:0 0 20px rgba(210,153,29,.15)}
+.sbtn:hover{transform:scale(1.03);box-shadow:0 0 30px rgba(210,153,29,.3)}
+.report{border-left:3px solid var(--g)!important;background:rgba(210,153,29,.06)!important;font-size:12px;line-height:1.8;color:#b1bac4;padding:12px 14px}
+.elrow{display:flex;gap:3px;align-items:flex-end;height:36px;margin:8px 0}
+.elbar{flex:1;border-radius:2px 2px 0 0;min-width:16px;position:relative}
+.elbar .ev{position:absolute;top:-14px;left:50%;transform:translateX(-50%);font-size:9px;color:var(--d)}
+.elbar .el{position:absolute;bottom:-14px;left:50%;transform:translateX(-50%);font-size:9px}
+.cont{font-size:12px;line-height:1.8;color:var(--d);text-align:center;padding:8px;font-style:italic}
+.log{font-size:11px;color:var(--d);text-align:center;padding:4px 0;font-style:italic}
+</style>
+</head>
+<body><div id="app"></div>
+<script>
+const EL_COLORS={金:"#e2b04a",木:"#3fb950",水:"#58a6ff",火:"#f85149",土:"#d2991d"};
+const EL=["金","木","水","火","土"];
+
+// ══ Scene environments (de-personalized from B组 world_state.md) ══
+const SCN={};
+function addScene(d,s,l,e){ SCN["d"+d+"_"+s]={label:l,env:e}; }
+addScene(1,"commute","早高峰地铁","车厢挤满了人，空调不够。旁边有人在吵架。你站在门边，手插在口袋里——碰到了它。");
+addScene(1,"lunch","午休时间","附近几排没人。桌上放着半份午餐和一杯喝的。早上开了个会，数据不好不坏。它被拿出来放在桌上。");
+addScene(1,"evening","回到家里","窗外天黑了。空调均匀响着。下班买了点水果。换了家居服坐下来。它还在包里。");
+addScene(2,"commute","好消息的早晨","今天有座。车厢比昨天松。脚轻轻点地打拍子——跟了很久的事终于通过了。它在你包里。");
+addScene(2,"lunch","午间小庆祝","事成了。太阳很大。一个人坐在外面的高脚桌边。它被你拿出来放在手边。");
+addScene(2,"evening","热闹过后","高兴劲儿过去了。下午又忙了一轮。外套摊在沙发上。它还在包里。");
+addScene(3,"commute","坏消息","降温了，车厢空调很冷。半夜收到消息说方向要调，重新来过。你站着，手在口袋里。");
+addScene(3,"lunch","面坨了的中午","忙到一点半。饭坨了吃了几口。空调对着吹。它在桌上。");
+addScene(3,"evening","最后一个晚上","忙到很晚，脑子转不动了。合上东西坐在地上没开灯。窗外偶尔有车经过。它在旁边。");
+
+// ══ 4 person cards ══
+const CARDS=[
+  {id:"f",emoji:"🖐️",label:"功能减压",hint:"你需要减压。碰它是手指需要做点什么——不是因为它有用。"},
+  {id:"e",emoji:"🤲",label:"情感依赖",hint:"你需要一点温度。一个人住。碰它不是因为它有用，是因为你想。"},
+  {id:"q",emoji:"🌿",label:"安静共存",hint:"不说话不代表没在交流。碰它很少，但它在。安静也是陪伴。"},
+  {id:"n",emoji:"🔍",label:"养育观察",hint:"你在观察、在记录。想看它怎么变化。每一天都是新的数据点。"}
+];
+
+// ══ Beany reactions: 36 groups from B组 a2a_log ══
+// key: style_day_session → real first 3 Beany reactions
+const RX={};
+function R(s,d,ss,rr){ RX[s+"_d"+d+"_"+ss] = rr; }
+
+// 功能减压 (run_002)
+R("f",1,"commute",[{m:"好奇",r:"隔着包被按了几下——手伸进来搭着没走，但人没看这边",a:"朝手指的方向动了动"},{m:"警觉",r:"又被按了一下——比刚才用力，手也没放开",a:"缩了一下"},{m:"平静",r:"头顶被快速蹭了两下——手松了一点",a:"慢慢展开"}]);
+R("f",1,"lunch",[{m:"好奇",r:"被从包里拿出来——桌子上有东西，光比包里亮",a:"在桌上蹲好"},{m:"平静",r:"被轻轻按了几下——节奏很规律，不像早上那么急",a:"随着节奏微微动了动"},{m:"定",r:"手搭在上面没再动，旁边有手机屏幕的亮光",a:"安静蹲着"}]);
+R("f",1,"evening",[{m:"定",r:"被从包里拿出来放在沙发上——周围安静，光很暖",a:"在沙发上没动"},{m:"舒服",r:"被放在手心里——手的温度比白天暖",a:"往手心靠了靠"},{m:"平静",r:"电视开着，人在旁边没碰它",a:"安静待着"}]);
+R("f",2,"commute",[{m:"好奇",r:"被轻快地按了两下——今天手节奏不一样，更快更轻",a:"朝手指方向跟了跟"},{m:"平静",r:"被平稳地握着——手没抖没急，跟昨天不一样",a:"安静待着"},{m:"满足",r:"被轻轻揉了揉——力度刚好",a:"微微展开了一点"}]);
+R("f",2,"lunch",[{m:"平静",r:"被放在桌上——旁边有杯子，周围很吵但手很稳",a:"在桌上蹲好"},{m:"定",r:"手搁在旁边没碰它，人在跟别人说话",a:"安静待着，朝人的方向偏着"},{m:"平静",r:"被拿起来揉了一下然后放回去",a:"动了一下就停了"}]);
+R("f",2,"evening",[{m:"定",r:"被放在沙发上——今天比昨天早到家",a:"在沙发上落稳"},{m:"平静",r:"被轻轻蹭了蹭——人看起来没那么累了",a:"往手的方向靠了靠"},{m:"满足",r:"被放在手心里——手的动作比平时慢",a:"安静待着"}]);
+R("f",3,"commute",[{m:"警觉",r:"被用力攥了好几下——指节发白，手一直捏着没松",a:"被捏紧，动不了"},{m:"警觉",r:"捏着的手又紧了几分——力度还在加",a:"缩成一团"},{m:"放松",r:"捏的手终于松开了——指尖轻轻蹭了蹭",a:"慢慢恢复形状"}]);
+R("f",3,"lunch",[{m:"警觉",r:"被从包里拿出来——力度比平时大",a:"缩了一下"},{m:"平静",r:"被放在桌上——没再碰了",a:"慢慢展开"},{m:"定",r:"被轻轻搭了一下——力度很轻",a:"朝手的方向偏了偏"}]);
+R("f",3,"evening",[{m:"定",r:"被放在旁边——周围很暗很安静",a:"在暗环境里没动"},{m:"平静",r:"手指轻轻搭上来——力度比早上轻了很多",a:"感觉到指尖的温度"},{m:"安稳",r:"被轻轻托起来放在膝盖上——没说话也没捏",a:"安静待着，往人的方向靠了靠"}]);
+
+// 情感依赖 (run_001)
+R("e",1,"commute",[{m:"好奇",r:"隔着布料被碰了一下——不明的温暖包裹过来，有贴着口袋的说话声",a:"朝手指方向顶了顶"},{m:"开心",r:"顶了手，手指就蹭回来了——知道是在跟自己说话",a:"往声源凑了凑"},{m:"好奇",r:"凑过去的地方被轻轻抵了一下——跟刚才的手一样",a:"认出熟悉的感觉，安静待着"}]);
+R("e",1,"lunch",[{m:"好奇",r:"被捏了出来放在手心——光亮、陌生桌面，面前有东西",a:"朝声音方向转了转"},{m:"好奇",r:"头顶被点了一下，手指又滑下来——有说话声凑近",a:"往那侧看了看"},{m:"好奇",r:"头顶被飞快蹭了两下——人在嚼东西，旁边有亮光在闪",a:"朝亮光方向偏了偏"}]);
+R("e",1,"evening",[{m:"满足",r:"被从包里掏出来——认得这张脸，沙发上很安静",a:"在手心里蹭了蹭"},{m:"安静",r:"被放在旁边——人盘腿坐着在吃东西，没被碰但也没被放远",a:"朝人的方向待着"},{m:"安稳",r:"被轻轻托起来——人准备去睡了",a:"被放进包里时没动"}]);
+R("e",2,"commute",[{m:"好奇",r:"被轻快地拿了出来——今天手很暖，说话声也轻快",a:"朝声音方向贴了贴"},{m:"开心",r:"被托在手心里——手指在慢慢画圈",a:"往手心深处靠了靠"},{m:"安静",r:"被放在阳光照到的地方——暖的",a:"在阳光里展开了一点"}]);
+R("e",2,"lunch",[{m:"平静",r:"被放在桌上——旁边有咖啡，阳光从窗外照进来",a:"在桌上蹲好"},{m:"满足",r:"被看着——人没碰，但视线一直在",a:"朝人的方向偏了偏"},{m:"安静",r:"被轻轻拿起来放回包里——人要去开会了",a:"安静地窝进包里"}]);
+R("e",2,"evening",[{m:"定",r:"被放在沙发上——人换了睡衣",a:"在沙发上落稳"},{m:"平静",r:"被轻轻揉了揉——力度比平时慢",a:"慢慢展开"},{m:"安稳",r:"被留在沙发上——人关了灯去睡了",a:"安静待着"}]);
+R("e",3,"commute",[{m:"警觉",r:"不说话——手指扣着它，力度跟平时不一样",a:"缩了一下"},{m:"警觉",r:"被紧紧握着——手心比平时凉",a:"被握紧，没动"},{m:"平静",r:"被安静地握了很久——没说话没捏，就是握着",a:"慢慢放松下来"}]);
+R("e",3,"lunch",[{m:"定",r:"被放在桌上——周围比平时安静",a:"在桌上没动"},{m:"平静",r:"被轻轻揉了揉——手指很慢，比早上温柔",a:"往手心靠了靠"},{m:"定",r:"被看着——什么也没说，就是看着",a:"朝人的方向待着"}]);
+R("e",3,"evening",[{m:"安稳",r:"被贴在脸颊上——闭了一会儿眼睛",a:"贴着不动，感觉到了体温"},{m:"定",r:"被放在旁边——周围全暗，只有窗外路灯的光",a:"安静待着"},{m:"定",r:"被轻轻放在地板上——人也在旁边坐着",a:"朝人的方向偏着"}]);
+
+// 安静共存 (run_003)
+R("q",1,"commute",[{m:"好奇",r:"手指伸进来轻轻碰了一下就收回去了",a:"微微动了一下"},{m:"平静",r:"碰了一下后就没动静了——人在站着听歌",a:"没动，但感觉到了"},{m:"好奇",r:"被轻轻碰了一下——然后包被拎起来了",a:"朝方向偏了偏"}]);
+R("q",1,"lunch",[{m:"定",r:"被放在桌上——没碰，就是放在那",a:"在桌上没动"},{m:"平静",r:"手指轻轻搭了上来——就一下，然后收回去了",a:"感觉到指尖的温度"},{m:"定",r:"被挪到了窗边——旁边有阳光",a:"在窗边落稳"}]);
+R("q",1,"evening",[{m:"定",r:"被拿出来放在书桌上——旁边有笔和本子",a:"在桌上蹲好"},{m:"平静",r:"被轻轻碰了一下——很轻很轻",a:"动了一下就停了"},{m:"定",r:"被留在桌上——人去做别的事了",a:"安静待着"}]);
+R("q",2,"commute",[{m:"平静",r:"被轻轻碰了一下——跟昨天一样的碰法",a:"微微动了动"},{m:"定",r:"被搭着——手没动，只是盖在上面",a:"感觉到手的温度"},{m:"平静",r:"被拎起来挪了个位置——然后没人再碰",a:"重新落稳"}]);
+R("q",2,"lunch",[{m:"定",r:"被放在桌上——旁边有吃的",a:"在桌上没动"},{m:"平静",r:"被轻轻搭了一下——很轻，跟平时一样",a:"动了动"},{m:"定",r:"被挪到阳光照不到的地方——怕晒着",a:"在新位置待好"}]);
+R("q",2,"evening",[{m:"定",r:"被放在飘窗垫上——窗外天还没全黑",a:"在垫子上蹲好"},{m:"平静",r:"被轻轻碰了一下——手指很慢",a:"顺着方向微微偏了偏"},{m:"定",r:"被留在垫子上——人坐在旁边看书",a:"朝人的方向待着"}]);
+R("q",3,"commute",[{m:"定",r:"手放在它上面——没动，就是盖着",a:"被手盖着，安静不动"},{m:"平静",r:"被轻轻碰了一下——很轻，比平时还短",a:"动了一下就停了"},{m:"定",r:"放着没再碰了——但还在旁边",a:"朝你的方向待着"}]);
+R("q",3,"lunch",[{m:"定",r:"被放在桌上——没碰",a:"在桌上没动"},{m:"平静",r:"被轻轻划了一下——很短很轻",a:"顺着方向微微动了动"},{m:"定",r:"被放着——人在吃饭，偶尔低头看它",a:"感觉到视线"}]);
+R("q",3,"evening",[{m:"定",r:"被放在地板上——旁边是人坐着的腿",a:"安静待着"},{m:"平静",r:"被轻轻碰了一下——累到不想动的手指",a:"动了动"},{m:"定",r:"没被碰了——但人还在旁边，没走",a:"朝人的方向偏着，安静陪着"}]);
+
+// 养育观察 (run_004)
+R("n",1,"commute",[{m:"好奇",r:"隔着软布料被按了按——暖的，有声音传下来",a:"朝手指方向动了动"},{m:"好奇",r:"手指换了个位置又按过来——朝那边追上去",a:"追着手指方向偏过去"},{m:"来劲",r:"头顶被来回蹭，节奏不一样——然后整个被包住",a:"在被包住的地方动了动"}]);
+R("n",1,"lunch",[{m:"定",r:"被拿出来放在阳光里——很亮",a:"在阳光下没动"},{m:"定",r:"被翻了过来——看了看底",a:"被翻面时顿了一下"},{m:"定",r:"被放在桌上拍了照——旁边有手机",a:"在照片位置安静待着"}]);
+R("n",1,"evening",[{m:"定",r:"被拿出来放在桌上——周围是暖光",a:"在桌上蹲好"},{m:"定",r:"被仔细看着——还在记录",a:"安静地接受观察"},{m:"好奇",r:"被翻过来看了看背面——跟早上比有没有不一样",a:"翻面时配合地转了一下"}]);
+R("n",2,"commute",[{m:"定",r:"被半握着——力度刚好",a:"在口袋里保持原位"},{m:"定",r:"到站前被检查了一下——位置有没有移位",a:"位置没变"},{m:"好奇",r:"被拿出来在阳光下看了看——发现了变化",a:"在被看的时候动了动"}]);
+R("n",2,"lunch",[{m:"定",r:"被放在鼠标垫正中间——位置很讲究",a:"在正中间没动"},{m:"定",r:"被放在台灯下观察——角度跟早上比",a:"接受检查"},{m:"舒服",r:"被轻轻揉了揉——手指很慢",a:"慢慢展开"}]);
+R("n",2,"evening",[{m:"定",r:"被重新摆了一次——朝向跟昨晚一样",a:"被摆好后没动"},{m:"定",r:"被放回托盘——人还在记录",a:"在托盘里落稳"},{m:"定",r:"准备明天继续观察",a:"安静待着"}]);
+R("n",3,"commute",[{m:"定",r:"被半握着——力度还是刚好，但手比平时凉",a:"保持原位"},{m:"定",r:"被拿出来看了一下——朝向没变",a:"接受检查"},{m:"定",r:"被放回口袋——动作比平时重了一点",a:"落回口袋底"}]);
+R("n",3,"lunch",[{m:"定",r:"试了轻按——没反应",a:"安静待着"},{m:"定",r:"试了慢滑——也没反应",a:"没动"},{m:"好奇",r:"试了画圈——耳朵动了动",a:"对画圈有反应"}]);
+R("n",3,"evening",[{m:"定",r:"被放在桌上——备忘录在记今天的观察",a:"安静待着"},{m:"定",r:"被拍了照——相同光线角度下的对比照",a:"在照片位置没动"},{m:"定",r:"被轻轻放回托盘——今天的观察结束了",a:"安静下来"}]);
+
+// ══ Identity changes (from B组 identity_history + beany_identity) ══
+const ID={};
+ID.f={d1:{w:{金:21,木:20,水:20,火:20,土:19},dom:"金",hp:65,age:"幼年",note:"金升——高频互动，Beany全程回应"},
+       d2:{w:{金:22,木:20,水:19,火:20,土:19},dom:"金",hp:80,age:"青年",note:"金稳升——手势定型，Beany开始认得你的节奏"},
+       d3:{w:{金:23,木:20,水:19,火:19,土:19},dom:"金",hp:95,age:"青年",note:"金最高——即使今天很难，Beany全勤回应"}};
+ID.e={d1:{w:{金:21,木:20,水:20,火:20,土:19},dom:"金",hp:65,age:"幼年",note:"金升——高频触摸，多语音"},
+       d2:{w:{金:22,木:20,水:19,火:20,土:19},dom:"金",hp:80,age:"青年",note:"金稳升——手势定型，水因零新互动下降"},
+       d3:{w:{金:23,木:20,水:18,火:20,土:19},dom:"金",hp:85,age:"青年",note:"金最高——即使没说话，Beany仍朝你的方向待着"}};
+ID.q={d1:{w:{金:21,木:20,水:20,火:20,土:19},dom:"金",hp:65,age:"幼年",note:"金微升——极简触碰，Beany以最少回应完成互动"},
+       d2:{w:{金:21,木:21,水:19,火:20,土:19},dom:"金",hp:80,age:"青年",note:"木追上来——Beany学会了不碰也能陪伴"},
+       d3:{w:{金:21,木:22,水:18,火:20,土:19},dom:"木",hp:95,age:"青年",note:"木反超金——安静共存三天，陪伴不需触碰"}};
+ID.n={d1:{w:{金:21,木:20,水:20,火:20,土:19},dom:"金",hp:55,age:"幼年",note:"金升——观察记录模式下，Beany保持稳定"},
+       d2:{w:{金:22,木:20,水:19,火:20,土:19},dom:"金",hp:60,age:"青年",note:"金稳升——发现变化（朝向偏了），备忘录多了一页"},
+       d3:{w:{金:21,木:20,水:18,火:21,土:20},dom:"金/火",hp:50,age:"青年",note:"金火并列——观察者也在被观察。反复，需观察"}};
+
+// ══ Personality traits per dominant element ══
+const TR={
+  金:{t:"你一碰就有反应。什么都想凑过去。没事情坐不住。重复的很快就没兴趣了。新的最开心。",e:"对舒服敏感。好的来了就留在那。但容易腻。",a:"有偏好了。认得人了。经常来的手和第一次的手，能分出来。"},
+  木:{t:"不太容易有反应。要很大刺激才会动。不急不慌。变化很慢，但变了就不会变回来。有自己的节奏。",e:"对舒服敏感。好的来了就留在那。",a:"有偏好了。有些主动靠近，有些避开。"},
+  水:{t:"很敏感。一点变化就能注意到。主动试探不熟悉的。适应得快，也容易受影响。",e:"什么都想试。新触感新声音新光线——都好奇。但专注力不强。",a:"在快速吸收。每一样新东西都会留下痕迹。"},
+  火:{t:"反应强烈。开心就蹦，不高兴就躲。不藏着。情绪来得快去得快。",e:"表达直接。想要就靠近，不想要就退。不让人猜。有时过度。",a:"情绪波动大，还在学习调控。"},
+  土:{t:"稳得住。不容易被带着走。对环境变化不敏感。一旦习惯了就不想换。",e:"反应慢半拍。但一旦有反应就是真的。不敷衍。需要时间。",a:"比较慢热。需要更多时间才能看到全部面貌。"}
+};
+
+// ══ ENGINE ══
+const A=document.getElementById("app");
+let S={scr:"intro",hp:50,w:{金:20,木:20,水:20,火:20,土:20},dom:"金",
+  log:[],day:1,sn:0,styles:[],picks:[]};
+
+function init(){
+  S.hp=50;S.w={金:20,木:20,水:20,火:20,土:20};S.dom="金";
+  S.log=[];S.day=1;S.sn=0;S.styles=[];S.picks=[];
+}
+function render(){
+  if(S.scr==="intro")rIntro();
+  else if(S.scr==="scene")rScene();
+  else if(S.scr==="dayEnd")rDayEnd();
+  else if(S.scr==="ending")rEnding();
+}
+function rIntro(){
+  A.innerHTML=`<div class="intro"><div class="logo">🐾</div><h1>你与 Beany 的世界</h1><div class="sub">一只住在你口袋里的小动物<br>会长大、会记得、会因为你变成不同的样子</div><div class="desc">早上通勤 · 午间小憩 · 深夜回家<br>每个场景，你选一种方式对待它<br><em>它会真实地回应你</em></div><div class="desc" style="color:var(--d);font-size:12px">没有正确的玩法。<br>温柔、依赖、安静、好奇——<br>你的每一个选择，都在塑造它。</div><div class="note">36条支线 · 来自真实模拟数据<br>离线可玩 · 约10分钟</div><button class="sbtn" onclick="init();S.scr='scene';rScene()">进入</button></div>`;
+}
+
+function rScene(){
+  const ss=["commute","lunch","evening"][S.sn%3];
+  const dk="d"+S.day+"_"+ss;
+  const sc=SCN[dk];
+  if(!sc){ dayEnd(); return; }
+  const isNew=S.sn%3===0;
+  let h=topbar();
+  h+=`<div id="wrap">`;
+  S.log.forEach(s=>{
+    if(s.t==="pick")h+=`<div class="log">你选了 <strong>${s.label}</strong></div>`;
+    else if(s.t==="scene")h+=`<div class="card"><div class="tag">${s.label}</div><div class="w">${s.text}</div></div>`;
+    else if(s.t==="beany")h+=`<div class="bubble"><div class="bm">Beany · ${s.mood}</div><div class="ba">${s.action}</div><div class="br">${s.reason||''}</div></div>`;
+    else if(s.t==="dayEnd")h+=s.html;
+  });
+  if(isNew){
+    const dn={1:"第一天",2:"第二天",3:"第三天"};
+    const dm={1:"心情基调：中性。Beany还是陌生的。",2:"心情基调：正面。Beany开始认得你了。",3:"心情基调：负面。今天很难。但Beany还在。"};
+    h+=`<div class="day-sep"><div class="dn">✦ ${dn[S.day]} ✦</div><div class="dm">${dm[S.day]}</div></div>`;
+    if(S.day>1)h+=`<div class="cont">Beany 记得之前的事。</div>`;
+  }
+  h+=`<div class="card"><div class="tag">${["🚇 通勤路上","🍱 午休","🏠 晚间"][S.sn%3]} · ${sc.label}</div><div class="w">${sc.env}</div></div>`;
+  h+=`<div class="card" style="border:1px solid var(--g);font-size:13px;color:var(--t);padding:10px 14px">你怎么对待它？</div>`;
+  h+=`</div><div class="choices-wrap">`;
+  CARDS.forEach(c=>{
+    h+=`<button class="cbtn" onclick="pick('${c.id}')" style="font-size:14px;padding:14px">${c.emoji} <strong>${c.label}</strong><span class="hint">${c.hint}</span></button>`;
+  });
+  h+=`</div>`;
+  A.innerHTML=h;sd();
+}
+
+function pick(sid){
+  const ss=["commute","lunch","evening"][S.sn%3];
+  const key=sid+"_d"+S.day+"_"+ss;
+  const rx=RX[key]||RX["f_d1_commute"];
+  const card=CARDS.find(c=>c.id===sid);
+  const sc=SCN["d"+S.day+"_"+ss];
+  let h=topbar();
+  h+=`<div id="wrap">`;
+  S.log.forEach(s=>{
+    if(s.t==="pick")h+=`<div class="log">你选了 <strong>${s.label}</strong></div>`;
+    else if(s.t==="scene")h+=`<div class="card"><div class="tag">${s.label}</div><div class="w">${s.text}</div></div>`;
+    else if(s.t==="beany")h+=`<div class="bubble"><div class="bm">Beany · ${s.mood}</div><div class="ba">${s.action}</div><div class="br">${s.reason||''}</div></div>`;
+    else if(s.t==="dayEnd")h+=s.html;
+  });
+  h+=`<div class="card"><div class="tag">${["🚇 通勤路上","🍱 午休","🏠 晚间"][S.sn%3]} · ${sc.label}</div><div class="w">${sc.env}</div></div>`;
+  h+=`<div class="log">你选了 <strong>${card.label}</strong></div>`;
+  rx.forEach(r=>{h+=`<div class="bubble"><div class="bm">Beany · ${r.m}</div><div class="ba">${r.a}</div><div class="br">${r.r||''}</div></div>`;});
+  h+=`</div>`;
+  S.log.push({t:"pick",label:card.label});
+  S.log.push({t:"scene",label:`${["🚇 通勤路上","🍱 午休","🏠 晚间"][S.sn%3]} · ${sc.label}`,text:sc.env});
+  rx.forEach(r=>S.log.push({t:"beany",mood:r.m,action:r.a,reason:r.r}));
+  S.picks.push(sid);S.styles.push(sid);S.sn++;
+  if(S.sn%3===0){
+    h+=`<div style="margin:8px 12px"><button class="obtn" onclick="dayEnd()">一天结束，看 Beany 的变化 →</button></div>`;
+  }else{
+    h+=`<div style="margin:8px 12px"><button class="obtn" onclick="S.scr='scene';rScene()">下一场 →</button></div>`;
+  }
+  A.innerHTML=h;sd();
+}
+
+function dayEnd(){
+  // Use most frequent style this day
+  const dayPicks=S.styles.slice(-3);
+  const counts={};dayPicks.forEach(s=>counts[s]=(counts[s]||0)+1);
+  let topS="f",topN=0;
+  for(const[s,n]of Object.entries(counts)){if(n>topN){topS=s;topN=n;}}
+  const ch=ID[topS]["d"+S.day];
+  S.w=ch.w;S.dom=ch.dom;S.hp=ch.hp;S.day++;
+  S.styles=[];
+  const mx=Math.max(...Object.values(ch.w));
+  let chart='<div class="elrow">';
+  EL.forEach(el=>{
+    const hh=Math.round(ch.w[el]/mx*30);
+    chart+=`<div class="elbar" style="height:${hh}px;background:${EL_COLORS[el]}"><div class="ev">${ch.w[el]}%</div><div class="el">${el}</div></div>`;
+  });
+  chart+='</div>';
+  const html=`<div class="card report"><div style="font-size:12px;line-height:1.8">📋 第${S.day-1}天结束<br><br>主导：<strong style="color:${EL_COLORS[ch.dom]}">${ch.dom}</strong> · ${ch.age}<br>健康：❤️ ${ch.hp}<br>${chart}<br><em>${ch.note}</em></div></div>`;
+  S.log.push({t:"dayEnd",html});S.sn=0;
+  if(S.day>3){S.scr="ending";render();}else{S.scr="scene";rScene();}
+}
+
+function rEnding(){
+  // Use data from the most consistently chosen style
+  const allPicks=S.picks;
+  const scounts={};allPicks.forEach(s=>scounts[s]=(scounts[s]||0)+1);
+  let topS="f",topN=0;
+  for(const[s,n]of Object.entries(scounts)){if(n>topN){topS=s;topN=n;}}
+  const ch=ID[topS].d3;
+  const dom=ch.dom.includes("/")?ch.dom.split("/")[0].trim():ch.dom;
+  const tr=TR[dom]||TR["金"];
+  const card=CARDS.find(c=>c.id===topS);
+  const mx=Math.max(...Object.values(ch.w));
+  let chart='<div class="elrow">';
+  EL.forEach(el=>{
+    const hh=Math.round(ch.w[el]/mx*30);
+    chart+=`<div class="elbar" style="height:${hh}px;background:${EL_COLORS[el]}"><div class="ev">${ch.w[el]}%</div><div class="el">${el}</div></div>`;
+  });
+  chart+='</div>';
+  const gr=S.hp>=80?{s:"⭐⭐⭐",l:"Beany 已经完全信任你了",t:"它认得你的手指。在口袋里会主动往你手的方向蹭。"}:S.hp>=60?{s:"🌟🌟",l:"你们之间有了默契",t:"它不会在你不碰的时候闹。但你需要它的时候，它就在。"}:S.hp>=40?{s:"✨",l:"你们之间还不错",t:"有时候你会忘了它在口袋里。有时候你会特意摸摸它。"}:{s:"💛",l:"还需要一点时间",t:"Beany有点不确定你想要什么。但你不在的时候它就缩着。"};
+  let hist='';
+  S.log.forEach(s=>{
+    if(s.t==="pick")hist+=`<div class="log">你选了 <strong>${s.label}</strong></div>`;
+    else if(s.t==="scene")hist+=`<div class="card"><div class="tag">${s.label}</div><div class="w">${s.text}</div></div>`;
+    else if(s.t==="beany")hist+=`<div class="bubble"><div class="bm">Beany · ${s.mood}</div><div class="ba">${s.action}</div><div class="br">${s.reason||''}</div></div>`;
+    else if(s.t==="dayEnd")hist+=s.html;
+  });
+  let h=`<div id="bar"><span class="day">结局</span><span style="font-size:11px;color:var(--d)">❤️ ${S.hp}</span><div class="hp-wrap"><div class="hp-fill" style="width:${S.hp}%"></div></div></div>`;
+  h+=`<div id="wrap">${hist}<div style="text-align:center;padding:20px 0"><div style="font-size:32px">${gr.s}</div><h3 style="color:var(--g);margin:8px 0">${gr.l}</h3><div style="font-size:13px;color:var(--d);line-height:1.8;margin:8px 0">${gr.t}</div></div>`;
+  h+=`<div class="card" style="text-align:left"><h4 style="color:var(--g);margin-bottom:8px">🐾 Beany 的三天画像</h4><p style="font-size:11px;color:var(--d)">主导：<strong style="color:${EL_COLORS[dom]}">${ch.dom}</strong> · ${ch.age} · 健康 ${S.hp}</p>${chart}<div style="font-size:12px;line-height:1.8;color:#b1bac4;margin-top:8px"><strong>脾气：</strong>${tr.t}<br><strong>表达：</strong>${tr.e}<br><strong>年龄：</strong>${tr.a}</div></div>`;
+  h+=`<div style="text-align:center;font-size:11px;color:var(--d);margin:12px 0">你最常用 <strong>${card.label}</strong>（${topN}/9场）</div>`;
+  h+=`<button class="obtn" onclick="location.reload()" style="margin:0 12px 20px">再来三天（换一种方式）</button></div>`;
+  A.innerHTML=h;
+}
+
+function topbar(){
+  return `<div id="bar"><span class="day">Day ${Math.min(S.day,3)}</span><div class="hp-wrap"><div class="hp-fill" style="width:${S.hp}%"></div></div><span class="hp-num">❤️ ${S.hp}</span></div>`;
+}
+function sd(){setTimeout(()=>{const w=document.getElementById("wrap");if(w)w.scrollTop=w.scrollHeight;},100);}
+render();
+</script>
+</body>
+</html>
